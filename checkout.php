@@ -6,6 +6,16 @@ $total = 0;
         $total += $row['price'] * $row['quantity'];
     endwhile;
 ?>
+<?php
+ $postData =[
+        'total_amount'=> 100, // replace with the actual amount
+        'currency'=> "BDT",
+        'tran_id'=> "UNIQUE_TRANSACTION_ID", // replace with your unique transaction id
+        'success_url'=> "http://yourdomain.com/success.php",
+        'fail_url'=> "http://yourdomain.com/fail.php",
+        'cancel_url'=> "http://yourdomain.com/cancel.php",
+    ];
+?>
 <section class="py-5">
     <div class="container">
         <div class="card rounded-0">
@@ -44,6 +54,12 @@ $total = 0;
                             <div class="d-flex w-100 justify-content-between">
                                 <button class="btn btn-flat btn-dark">Cash on Delivery</button>
                                 <span id="paypal-button"></span>
+                                <button class="your-button-class" id="sslczPayBtn"
+                                        token="if you have any token validation"
+                                        postdata=''
+                                        order="If you already have the transaction generated for current order"
+                                        endpoint="checkout_ajax.php"> Pay Now
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -137,3 +153,41 @@ $(function(){
     })
 })
 </script>
+<script>
+    var postData = {
+        amount: 100,
+        currency: "BDT",
+        tran_id: "UNIQUE_TRANSACTION_ID",
+        cus_name: "Customer Name",
+        cus_email: "customer@example.com",
+        cus_add1: "Customer Address",
+        cus_city: "Dhaka",
+        cus_postcode: "1216",
+        cus_country: "Bangladesh",
+        cus_phone: "01711111111",
+        ship_name: "Customer Name",
+        ship_add1: "Customer Address",
+        ship_city: "Dhaka",
+        ship_postcode: "1216",
+        ship_country: "Bangladesh",
+        product_profile: "general",
+        product_name: "Test Product",
+        product_category: "Test Category"
+    };
+    document.getElementById('sslczPayBtn').setAttribute('postdata', JSON.stringify(postData));
+    (function (window, document) {
+        var loader = function () {
+            var script = document.createElement("script"), tag = document.getElementsByTagName("script")[0];
+            // script.src = "https://sandbox.sslcommerz.com/embed.min.js?" + Math.random().toString(36).substring(7);
+            script.src = "<?php echo base_url ?>assets/js/sslCommerz.js";
+            tag.parentNode.insertBefore(script, tag);
+        };
+
+        window.addEventListener ? window.addEventListener("load", loader, false) : window.attachEvent("onload", loader);
+    })(window, document);
+</script>
+
+<script>
+
+</script>
+

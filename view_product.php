@@ -42,7 +42,7 @@
                 <h1 class="display-5 fw-bolder border-bottom border-primary pb-1"><?php echo $name ?></h1>
                 <p class="m-0"><small>Brand: <?php echo $bname ?></small></p>
                 <div class="fs-5 mb-5">
-                &#8369; <span id="price"><?php echo number_format($inv[0]['price']) ?></span>
+                TK  <span id="price"><?php echo number_format($inv[0]['price']) ?></span>
                 <br>
                 <span><small><b>Available Stock:</b> <span id="avail"><?php echo $inv[0]['quantity'] ?></span></small></span>
                 </div>
