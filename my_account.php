@@ -1,4 +1,7 @@
-    
+    <?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ?>
 <section class="py-2">
     <div class="container">
         <div class="card rounded-0">
@@ -28,8 +31,13 @@
                         <tbody>
                             <?php 
                                 $i = 1;
-                                $qry = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as client from `orders` o inner join clients c on c.id = o.client_id where o.client_id = '".$_settings->userdata('id')."' order by unix_timestamp(o.date_created) desc ");
+                                $qry = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as client 
+                                        from `orders` o 
+                                inner join clients c on c.id = o.clint_id 
+                                where o.clint_id = '".$_settings->userdata('id')."' 
+                                order by unix_timestamp(o.date_created) desc ");
                                 while($row = $qry->fetch_assoc()):
+
                             ?>
                                 <tr>
                                     <td><?php echo $i++ ?></td>
@@ -37,14 +45,14 @@
                                     <td><a href="javascript:void(0)" class="view_order" data-id="<?php echo $row['id'] ?>"><?php echo md5($row['id']); ?></a></td>
                                     <td><?php echo number_format($row['amount']) ?> </td>
                                     <td class="text-center">
-                                            <?php if($row['status'] == 0): ?>
+                                            <?php if($row['status'] == 'Pending'): ?>
                                                 <span class="badge badge-light text-dark">Pending</span>
-                                            <?php elseif($row['status'] == 1): ?>
+                                            <?php elseif($row['status'] == 'Packed'): ?>
                                                 <span class="badge badge-primary">Packed</span>
-                                            <?php elseif($row['status'] == 2): ?>
+                                            <?php elseif($row['status'] == 'OutOfDelivery'): ?>
                                                 <span class="badge badge-warning">Out for Delivery</span>
-                                            <?php elseif($row['status'] == 3): ?>
-                                                <span class="badge badge-success">Delivered</span>
+                                            <?php elseif($row['status'] == 'Success'): ?>
+                                                <span class="badge badge-success">Success</span>
                                             <?php else: ?>
                                                 <span class="badge badge-danger">Cancelled</span>
                                             <?php endif; ?>

@@ -476,12 +476,14 @@ Class Master extends DBConnection {
 		extract($_POST);
 		$name = $this->settings->userdata('firstname');
         $client_id = $this->settings->userdata('id');
+        $date = date('Y-m-d H:i:s', time());
 
-		$data = " name = '{$name}' ";
+        $data = " name = '{$name}' ";
 		$data .= " ,payment_method = '{$payment_method}' ";
 		$data .= " ,order_type = '{$order_type}' ";
 		$data .= " ,amount = '{$amount}' ";
 		$data .= " ,address = '{$delivery_address}' ";
+		$data .= " ,date_created = '{$date}' ";
 		$order_sql = "INSERT INTO `orders` set $data";
 		$save_order = $this->conn->query($order_sql);
 		if($this->capture_err())

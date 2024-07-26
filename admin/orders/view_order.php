@@ -1,4 +1,8 @@
-<?php if(isset($_GET['view'])): 
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
+<?php if(isset($_GET['view'])):
 require_once('../../config.php');
 endif;?>
 <?php if($_settings->chk_flashdata('success')): ?>
@@ -11,11 +15,17 @@ if(!isset($_GET['id'])){
     $_settings->set_flashdata('error','No order ID Provided.');
     redirect('admin/?page=orders');
 }
-$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as client FROM `orders` o inner join clients c on c.id = o.client_id where o.id = '{$_GET['id']}' ");
+$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as client 
+        FROM `orders` o 
+        inner join clients c on c.id = o.clint_id 
+        where o.id = '{$_GET['id']}' ");
 if($order->num_rows > 0){
-    foreach($order->fetch_assoc() as $k => $v){
-        $$k = $v;
-    }
+    $data = $order->fetch_assoc();
+    $client=$data['client'];
+    $order_type=1;
+    $delivery_address=$data['address'];
+    $payment_method=$data['payment_method'];
+    $status = $data['status'];
 }else{
     $_settings->set_flashdata('error','Order ID provided is Unknown');
     redirect('admin/?page=orders');
@@ -45,12 +55,11 @@ if($order->num_rows > 0){
                 </thead>
                 <tbody>
                     <?php 
-                        $olist = $conn->query("SELECT o.*,p.name,b.name as bname FROM order_list o inner join products p on o.product_id = p.id inner join brands b on p.brand_id = b.id where o.order_id = '{$id}' ");
-                        while($row = $olist->fetch_assoc()):
-                        foreach($row as $k => $v){
-                            $row[$k] = trim(stripslashes($v));
-                        }
-                    ?>
+                        $olist = $conn->query("SELECT o.*,p.name,b.name as bname FROM order_list o 
+                                inner join products p on o.product_id = p.id 
+                                inner join brands b on p.brand_id = b.id where o.order_id = '{$_GET['id']}' ");
+
+                    $row = $olist->fetch_assoc();?>
                     <tr>
                         <td><?php echo $row['quantity'] ?></td>
                         <td>
@@ -61,12 +70,12 @@ if($order->num_rows > 0){
                         <td class="text-right"><?php echo number_format($row['price']) ?></td>
                         <td class="text-right"><?php echo number_format($row['price'] * $row['quantity']) ?></td>
                     </tr>
-                    <?php endwhile; ?>
+
                 </tbody>
                 <tfoot>
                     <tr>
                         <th colspan='3'  class="text-right">Total</th>
-                        <th class="text-right"><?php echo number_format($amount) ?></th>
+                        <th class="text-right"><?php echo number_format($row['price'] * $row['quantity']) ?></th>
                     </tr>
                 </tfoot>
             </table>
@@ -74,7 +83,7 @@ if($order->num_rows > 0){
         <div class="row">
             <div class="col-6">
                 <p>Payment Method: <?php echo $payment_method ?></p>
-                <p>Payment Status: <?php echo $paid == 0 ? '<span class="badge badge-light text-dark">Unpaid</span>' : '<span class="badge badge-success">Paid</span>' ?></p>
+                <p>Payment Status: <?php echo @$paid == 0 ? '<span class="badge badge-light text-dark">Unpaid</span>' : '<span class="badge badge-success">Paid</span>' ?></p>
                 <p>Order Type: <?php echo $order_type == 1 ? '<span class="badge badge-light text-dark">For Delivery</span>' : '<span class="badge badge-light text-dark">Pick-up</span>' ?></p>
             </div>
             <div class="col-6 row row-cols-2">
@@ -82,19 +91,19 @@ if($order->num_rows > 0){
                 <div class="col-9">
                 <?php 
                     switch($status){
-                        case '0':
+                        case 'Pending':
                             echo '<span class="badge badge-light text-dark">Pending</span>';
 	                    break;
-                        case '1':
+                        case 'Packed':
                             echo '<span class="badge badge-primary">Packed</span>';
 	                    break;
-                        case '2':
+                        case 'OutOfDelivery':
                             echo '<span class="badge badge-warning">Out for Delivery</span>';
 	                    break;
-                        case '3':
-                            echo '<span class="badge badge-success">Delivered</span>';
+                        case 'Success':
+                            echo '<span class="badge badge-success">Success</span>';
 	                    break;
-                        case '5':
+                        case 'Pickedup':
                             echo '<span class="badge badge-success">Picked Up</span>';
 	                    break;
                         default:

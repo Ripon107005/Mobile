@@ -1,4 +1,7 @@
-
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+?>
 <!-- Footer-->
 <footer class="py-4 bg-maroon" style="width: 100%; margin-top: 15px">
             <div class="container">
@@ -95,8 +98,12 @@
             start_loader()
             $.ajax({
                 url:$url,
-                error:err=>{
-                    console.log()
+                error:(xhr, status, error)=>{
+                    console.log("Error details:", {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
                     alert("An error occured")
                 },
                 success:function(resp){

@@ -17,9 +17,13 @@ class OrderTransaction {
         $address = $post_data['cus_add1'];
         $transaction_id = $post_data['tran_id'];
         $currency = $post_data['currency'];
+        $date = date('Y-m-d H:i:s', time());
+        $payment_method='Online Payment';
+        $order_type='1';
 
-        $sql = "INSERT INTO orders (clint_id, email, phone, amount, address, status, transaction_id,currency)
-                                    VALUES ('$id', '$email', '$phone','$transaction_amount','$address','Pending', '$transaction_id','$currency')";
+
+        $sql = "INSERT INTO orders (clint_id, email, phone, amount,order_type,payment_method ,address, status, transaction_id,currency,date_created)
+                                    VALUES ('$id', '$email', '$phone','$transaction_amount','$order_type','$payment_method','$address','Pending', '$transaction_id','$currency','$date')";
 
         return $sql;
     }
