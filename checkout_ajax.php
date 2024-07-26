@@ -17,33 +17,28 @@ $post_data['currency'] = "BDT";
 $post_data['tran_id'] = "SSLCZ_TEST_" . uniqid();
 
 //# CUSTOMER INFORMATION
-$post_data['cus_name'] = isset($requestData['cus_name']) ? $requestData['cus_name'] : "John Doe";
+$post_data['cus_id'] = isset($requestData['cus_id']) ? $requestData['cus_id'] : "0";
+$post_data['cus_name'] = isset($requestData['cus_name']) ? $requestData['cus_name'] : "0";
 $post_data['cus_email'] = isset($requestData['cus_email']) ? $requestData['cus_email'] : "john.doe@email.com";
 $post_data['cus_add1'] = isset($requestData['cus_add1']) ? $requestData['cus_add1'] : "Dhaka";
-$post_data['cus_add2'] = "Dhaka";
-$post_data['cus_city'] = "Dhaka";
-$post_data['cus_state'] = "Dhaka";
-$post_data['cus_postcode'] = "1000";
-$post_data['cus_country'] = "Bangladesh";
 $post_data['cus_phone'] = isset($requestData['cus_phone']) ? $requestData['cus_phone'] : "01711111111";
-$post_data['cus_fax'] = "01711111111";
+$post_data['num_of_item'] = isset($requestData['num_of_item']) ? $requestData['num_of_item'] : "0";
 
 # SHIPMENT INFORMATION
 $post_data["shipping_method"] = "YES";
-$post_data['ship_name'] = "Store Test";
-$post_data['ship_add1'] = "Dhaka";
-$post_data['ship_add2'] = "Dhaka";
-$post_data['ship_city'] = "Dhaka";
-$post_data['ship_state'] = "Dhaka";
-$post_data['ship_postcode'] = "1000";
-$post_data['ship_phone'] = "";
-$post_data['ship_country'] = "Bangladesh";
-
-$post_data['emi_option'] = "1";
-$post_data["product_category"] = "Electronic";
-$post_data["product_profile"] = "general";
-$post_data["product_name"] = "Computer";
-$post_data["num_of_item"] = "1";
+$post_data["cus_city"] = "KHULNA";
+$post_data["ship_city"] = "KHULNA";
+$post_data["cus_postcode"] = "GPO-9000";
+$post_data["ship_postcode"] = "GPO-9000";
+$post_data["currency"] = "BDT";
+$post_data["cus_country"] = "BANGLADESH";
+$post_data["ship_country"] = "BANGLADESH";
+$post_data["product_profile"] = "GENERAL";
+$post_data["cus_name"] = isset($requestData['ship_name']) ? $requestData['ship_name'] : "john.doe@email.com";
+$post_data['ship_name'] =isset($requestData['ship_name']) ? $requestData['ship_name'] : "john.doe@email.com";
+$post_data['ship_add1'] = isset($requestData['ship_add1']) ? $requestData['ship_add1'] : "john.doe@email.com";
+$post_data['product_category'] = isset($requestData['product_category']) ? $requestData['product_category'] : "john.doe@email.com";
+$post_data['product_name'] = isset($requestData['product_name']) ? $requestData['product_name'] : "john.doe@email.com";
 
 # OPTIONAL PARAMETERS
 // $post_data['value_a'] = "Regent Air";

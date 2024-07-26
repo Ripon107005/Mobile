@@ -1,20 +1,36 @@
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
-<?php 
+<?php
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+
 $total = 0;
-    $qry = $conn->query("SELECT c.*,p.name,i.price,p.id as pid from `cart` c inner join `inventory` i on i.id=c.inventory_id inner join products p on p.id = i.product_id where c.client_id = ".$_settings->userdata('id'));
+$qry = $conn->query("
+    SELECT 
+        c.*, 
+        p.name, 
+        i.price, 
+        p.id AS pid, 
+        cat.category AS catName
+    FROM 
+        `cart` c 
+    INNER JOIN 
+        `inventory` i ON i.id = c.inventory_id 
+    INNER JOIN 
+        `products` p ON p.id = i.product_id 
+    INNER JOIN 
+        `categories` cat ON cat.id = p.category_id 
+    WHERE 
+        c.client_id = '" . $_settings->userdata('id') . "'
+");
+
     while($row= $qry->fetch_assoc()):
         $total += $row['price'] * $row['quantity'];
+        $productName[]=$row['name'];
+        $CategoryName[]=$row['catName'];
     endwhile;
-?>
-<?php
- $postData =[
-        'total_amount'=> 100, // replace with the actual amount
-        'currency'=> "BDT",
-        'tran_id'=> "UNIQUE_TRANSACTION_ID", // replace with your unique transaction id
-        'success_url'=> "http://yourdomain.com/success.php",
-        'fail_url'=> "http://yourdomain.com/fail.php",
-        'cancel_url'=> "http://yourdomain.com/cancel.php",
-    ];
+    $productNames = isset($productName) && !empty($productName) ? implode(',',$productName):'';
+    $categoryNames = isset($CategoryName) && !empty($CategoryName) ? implode(',',$CategoryName):'';
+    $rowCount = $qry->num_rows;
+
 ?>
 <section class="py-5">
     <div class="container">
@@ -53,7 +69,7 @@ $total = 0;
                         <h4 class="text-muted">Payment Method</h4>
                             <div class="d-flex w-100 justify-content-between">
                                 <button class="btn btn-flat btn-dark">Cash on Delivery</button>
-                                <span id="paypal-button"></span>
+
                                 <button class="your-button-class" id="sslczPayBtn"
                                         token="if you have any token validation"
                                         postdata=''
@@ -69,47 +85,6 @@ $total = 0;
     </div>
 </section>
 <script>
-paypal.Button.render({
-    env: 'sandbox', // change for production if app is live,
- 
-        //app's client id's
-	client: {
-        sandbox:    'AdDNu0ZwC3bqzdjiiQlmQ4BRJsOarwyMVD_L4YQPrQm4ASuBg4bV5ZoH-uveg8K_l9JLCmipuiKt4fxn',
-        //production: 'AaBHKJFEej4V6yaArjzSx9cuf-UYesQYKqynQVCdBlKuZKawDDzFyuQdidPOBSGEhWaNQnnvfzuFB9SM'
-    },
- 
-    commit: true, // Show a 'Pay Now' button
- 
-    style: {
-    	color: 'blue',
-    	size: 'small'
-    },
- 
-    payment: function(data, actions) {
-        return actions.payment.create({
-            payment: {
-                transactions: [
-                    {
-                    	//total purchase
-                        amount: { 
-                        	total: '<?php echo $total; ?>', 
-                        	currency: 'PHP' 
-                        }
-                    }
-                ]
-            }
-        });
-    },
- 
-    onAuthorize: function(data, actions) {
-        return actions.payment.execute().then(function(payment) {
-    		// //sweetalert for successful transaction
-    		// swal('Thank you!', 'Paypal purchase successful.', 'success');
-            payment_online()
-        });
-    },
- 
-}, '#paypal-button');
 
 function payment_online(){
     $('[name="payment_method"]').val("Online Payment")
@@ -155,30 +130,30 @@ $(function(){
 </script>
 <script>
     var postData = {
-        amount: 100,
+        amount: '<?=$total?>',
         currency: "BDT",
-        tran_id: "UNIQUE_TRANSACTION_ID",
-        cus_name: "Customer Name",
-        cus_email: "customer@example.com",
-        cus_add1: "Customer Address",
+        cus_id: "<?=$_SESSION['userdata']['id']?>",
+        cus_name: "<?=$_SESSION['userdata']['firstname']?>",
+        cus_email: "<?=$_SESSION['userdata']['email']?>",
+        cus_add1: "<?=isset($_SESSION['userdata']['default_delivery_address']) && !empty($_SESSION['userdata']['default_delivery_address']) ? $_SESSION['userdata']['default_delivery_address']:''?>",
         cus_city: "Dhaka",
         cus_postcode: "1216",
         cus_country: "Bangladesh",
-        cus_phone: "01711111111",
-        ship_name: "Customer Name",
-        ship_add1: "Customer Address",
+        cus_phone: "<?=isset($_SESSION['userdata']['contact']) && !empty($_SESSION['userdata']['contact']) ? $_SESSION['userdata']['contact']:''?>",
+        ship_name: "<?=isset($_SESSION['userdata']['firstname']) && !empty($_SESSION['userdata']['firstname']) ? $_SESSION['userdata']['firstname']:''?>",
+        ship_add1: "<?=isset($_SESSION['userdata']['default_delivery_address']) && !empty($_SESSION['userdata']['default_delivery_address']) ? $_SESSION['userdata']['default_delivery_address']:''?>",
         ship_city: "Dhaka",
         ship_postcode: "1216",
         ship_country: "Bangladesh",
         product_profile: "general",
-        product_name: "Test Product",
-        product_category: "Test Category"
+        product_name: "<?=$productNames?>",
+        num_of_item: "<?=$rowCount?>",
+        product_category: "<?=$categoryNames?>"
     };
     document.getElementById('sslczPayBtn').setAttribute('postdata', JSON.stringify(postData));
     (function (window, document) {
         var loader = function () {
             var script = document.createElement("script"), tag = document.getElementsByTagName("script")[0];
-            // script.src = "https://sandbox.sslcommerz.com/embed.min.js?" + Math.random().toString(36).substring(7);
             script.src = "<?php echo base_url ?>assets/js/sslCommerz.js";
             tag.parentNode.insertBefore(script, tag);
         };

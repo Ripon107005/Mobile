@@ -472,15 +472,16 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 	}
 	function place_order(){
+
 		extract($_POST);
-		$client_id = $this->settings->userdata('id');
-		
-		$data = " client_id = '{$client_id}' ";
+		$name = $this->settings->userdata('firstname');
+        $client_id = $this->settings->userdata('id');
+
+		$data = " name = '{$name}' ";
 		$data .= " ,payment_method = '{$payment_method}' ";
 		$data .= " ,order_type = '{$order_type}' ";
 		$data .= " ,amount = '{$amount}' ";
-		$data .= " ,paid = '{$paid}' ";
-		$data .= " ,delivery_address = '{$delivery_address}' ";
+		$data .= " ,address = '{$delivery_address}' ";
 		$order_sql = "INSERT INTO `orders` set $data";
 		$save_order = $this->conn->query($order_sql);
 		if($this->capture_err())
@@ -488,7 +489,9 @@ Class Master extends DBConnection {
 		if($save_order){
 			$order_id = $this->conn->insert_id;
 			$data = '';
-			$cart = $this->conn->query("SELECT c.*,p.name,i.price,p.id as pid from `cart` c inner join `inventory` i on i.id=c.inventory_id inner join products p on p.id = i.product_id where c.client_id ='{$client_id}' ");
+			$cart = $this->conn->query("SELECT c.*,p.name,i.price,p.id as pid from `cart` c 
+            inner join `inventory` i on i.id=c.inventory_id 
+            inner join products p on p.id = i.product_id where c.client_id ='{$client_id}' ");
 			while($row= $cart->fetch_assoc()):
 				if(!empty($data)) $data .= ", ";
 				$total = $row['price'] * $row['quantity'];
