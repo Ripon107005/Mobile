@@ -3,166 +3,41 @@
 $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
 ?>
 <style>
-    /* Style.css */
-    * {
-        margin: 0;
-        padding: 0;
+    .min-max-slider {position: relative; width: 200px; text-align: center; margin-bottom: 50px;}
+    .min-max-slider > label {display: none;}
+    span.value {height: 1.7em; font-weight: bold; display: inline-block;}
+    span.value.lower::before {
+        content: "Tk ";
+        display: inline-block;
     }
 
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        background: #ffffff;
-        flex-direction: column;
+    span.value.upper::before {
+        content: "-Tk ";
+        display: inline-block;
+        margin-left: 0.4em;
     }
+    .min-max-slider > .legend {display: flex; justify-content: space-between;}
+    .min-max-slider > .legend > * {font-size: small; opacity: 0.25;}
+    .min-max-slider > input {cursor: pointer; position: absolute;}
 
-    .main {
-        background-color: #fff;
-        margin-top: 5px;
-        box-shadow: 0 0 20px
-        rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        transition: transform 0.2s;
-        width: 100%
-    }
-
-    .gfg {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        font-weight: 600;
-        color: #01940b;
-    }
-
-    .custom-wrapper {
-        margin: 0;
-        width: 100%;
-        position: relative;
-    }
-
-    .header h2 {
-        font-size: 30px;
-        color: #01940b;
-        display: flex;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .price-input-container {
-        width: 100%;
-    }
-
-    .price-input .price-field {
-        display: flex;
-        margin-bottom: 22px;
-    }
-
-    .price-field span {
-        margin-right: 10px;
-        font-size: 15px;
-    }
-
-    .price-field input {
-        flex: 1;
-        height: 35px;
-        width: 100%;
-        font-size: 15px;
-        font-family: "DM Sans", sans-serif;
-        border-radius: 9px;
-        text-align: center;
-        border: 0px;
-        background: #e4e4e4;
-    }
-
-    .price-input {
-        width: 100%;
-        font-size: 19px;
-        color: #555;
-    }
-
-    /* Remove Arrows/Spinners */
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
+    /* webkit specific styling */
+    .min-max-slider > input {
         -webkit-appearance: none;
-        margin: 0;
+        outline: none!important;
+        background: transparent;
+        background-image: linear-gradient(to bottom, transparent 0%, transparent 30%, silver 30%, silver 60%, transparent 60%, transparent 100%);
     }
-
-    .slider-container {
-        width: 100%;
+    .min-max-slider > input::-webkit-slider-thumb {
+        -webkit-appearance: none; /* Override default look */
+        appearance: none;
+        width: 14px; /* Set a specific slider handle width */
+        height: 14px; /* Slider handle height */
+        background: #eee; /* Green background */
+        cursor: pointer; /* Cursor on hover */
+        border: 1px solid gray;
+        border-radius: 100%;
     }
-
-    .slider-container {
-        height: 6px;
-        position: relative;
-        background: #e4e4e4;
-        border-radius: 5px;
-    }
-
-    .slider-container .price-slider {
-        height: 100%;
-        left: 25%;
-        right: 15%;
-        position: absolute;
-        border-radius: 5px;
-        background: #01940b;
-    }
-
-    .range-input {
-        position: relative;
-    }
-
-    .range-input input {
-        position: absolute;
-        width: 100%;
-        height: 5px;
-        background: none;
-        top: -5px;
-        pointer-events: none;
-        cursor: pointer;
-        -webkit-appearance: none;
-    }
-
-    /* Styles for the range thumb in WebKit browsers */
-    input[type="range"]::-webkit-slider-thumb {
-        height: 18px;
-        width: 18px;
-        border-radius: 70%;
-        background: #555;
-        pointer-events: auto;
-        -webkit-appearance: none;
-    }
-
-    @media screen and (max-width: 768px) {
-        .main {
-            width: 80%;
-            margin-right: 5px;
-        }
-
-        .custom-wrapper {
-            width: 100%;
-            left: 0;
-            padding: 0 10px;
-        }
-
-        .projtitle {
-            width: 100%;
-            position: relative;
-            right: 26px;
-        }
-
-        .price-input {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .price-field {
-            margin-bottom: 10px;
-        }
-    }
-
+    .min-max-slider > input::-webkit-slider-runnable-track {cursor: pointer;}
 </style>
 <section class="py-1">
     <div class="container-fluid">
@@ -196,46 +71,13 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
                 </li>
                 <?php endwhile; ?>
             </ul>
-            <div class="main">
 
-                <div class="custom-wrapper">
-
-                    <div class="price-input-container">
-                        <div class="price-input">
-                            <div class="price-field">
-                                <span>Minimum Price</span>
-                                <input type="number"
-                                       class="min-input"
-                                       value="<?=$minPrice?>">
-                            </div>
-                            <div class="price-field">
-                                <span>Maximum Price</span>
-                                <input type="number"
-                                       class="max-input"
-                                       value="<?=$maxPrice?>">
-                            </div>
-                        </div>
-                        <div class="slider-container">
-                            <div class="price-slider">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Slider -->
-                    <div class="range-input">
-                        <input type="range"
-                               class="min-range"
-                               min="0"
-                               max="10000"
-                               value="2500"
-                               step="1">
-                        <input type="range"
-                               class="max-range"
-                               min="0"
-                               max="10000"
-                               value="8500"
-                               step="1">
-                    </div>
+            <div class=" mt-1 custom-wrapper">
+                <div class="min-max-slider" data-legendnum="2">
+                    <label for="min">Minimum price</label>
+                    <input id="min" class="min" name="min" type="range" step="1" min="<?= isset($_GET['minPrice']) && !empty($_GET['minPrice']) ? $_GET['minPrice']: $minPrice?>" max="<?=$maxPrice?>" />
+                    <label for="max">Maximum price</label>
+                    <input id="max" class="max" name="max" type="range" step="1" min="0" max="<?=isset($_GET['maxPrice']) && !empty($_GET['maxPrice']) ? $_GET['maxPrice']:$maxPrice?>" />
                 </div>
             </div>
 
@@ -372,122 +214,136 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
 
 </script>
 <script>
-    // Script.js
-    const rangevalue =
-        document.querySelector(".slider-container .price-slider");
-    const rangeInputvalue =
-        document.querySelectorAll(".range-input input");
+    var thumbsize = 14;
 
-    // Set the price gap
-    let priceGap = 500;
+    function draw(slider,splitvalue) {
 
-    // Adding event listners to price input elements
-    const priceInputvalue =
-        document.querySelectorAll(".price-input input");
-    for (let i = 0; i < priceInputvalue.length; i++) {
-        priceInputvalue[i].addEventListener("input", e => {
+        /* set function vars */
+        var min = slider.querySelector('.min');
+        var max = slider.querySelector('.max');
+        var lower = slider.querySelector('.lower');
+        var upper = slider.querySelector('.upper');
+        var legend = slider.querySelector('.legend');
+        var thumbsize = parseInt(slider.getAttribute('data-thumbsize'));
+        var rangewidth = parseInt(slider.getAttribute('data-rangewidth'));
+        var rangemin = parseInt(slider.getAttribute('data-rangemin'));
+        var rangemax = parseInt(slider.getAttribute('data-rangemax'));
 
-            // Parse min and max values of the range input
-            let minp = parseInt(priceInputvalue[0].value);
-            let maxp = parseInt(priceInputvalue[1].value);
-            let diff = maxp - minp
+        /* set min and max attributes */
+        min.setAttribute('max',splitvalue);
+        max.setAttribute('min',splitvalue);
 
-            if (minp < 0) {
-                alert("minimum price cannot be less than 0");
-                priceInputvalue[0].value = 0;
-                minp = 0;
-            }
+        /* set css */
+        min.style.width = parseInt(thumbsize + ((splitvalue - rangemin)/(rangemax - rangemin))*(rangewidth - (2*thumbsize)))+'px';
+        max.style.width = parseInt(thumbsize + ((rangemax - splitvalue)/(rangemax - rangemin))*(rangewidth - (2*thumbsize)))+'px';
+        min.style.left = '0px';
+        max.style.left = parseInt(min.style.width)+'px';
+        min.style.top = lower.offsetHeight+'px';
+        max.style.top = lower.offsetHeight+'px';
+        legend.style.marginTop = min.offsetHeight+'px';
+        slider.style.height = (lower.offsetHeight + min.offsetHeight + legend.offsetHeight)+'px';
 
-            // Validate the input values
-            if (maxp > 10000) {
-                alert("maximum price cannot be greater than 10000");
-                priceInputvalue[1].value = '<?=$maxPrice?>';
-                maxp = '<?=$maxPrice?>';
-            }
+        /* correct for 1 off at the end */
+        if(max.value>(rangemax - 1)) max.setAttribute('data-value',rangemax);
 
-            if (minp > maxp - priceGap) {
-                priceInputvalue[0].value = maxp - priceGap;
-                minp = maxp - priceGap;
+        /* write value and labels */
+        max.value = max.getAttribute('data-value');
+        min.value = min.getAttribute('data-value');
+        lower.innerHTML = min.getAttribute('data-value');
+        upper.innerHTML = max.getAttribute('data-value');
 
-                if (minp < 0) {
-                    priceInputvalue[0].value = '<?=$minPrice?>';
-                    minp = '<?=$minPrice?>';
-                }
-            }
-
-            // Check if the price gap is met
-            // and max price is within the range
-            if (diff >= priceGap && maxp <= rangeInputvalue[1].max) {
-                if (e.target.className === "min-input") {
-                    rangeInputvalue[0].value = minp;
-                    let value1 = rangeInputvalue[0].max;
-                    rangevalue.style.left = `${(minp / value1) * 100}%`;
-                }
-                else {
-                    rangeInputvalue[1].value = maxp;
-                    let value2 = rangeInputvalue[1].max;
-                    rangevalue.style.right =
-                        `${100 - (maxp / value2) * 100}%`;
-                }
-            }
-        });
-
-        // Add event listeners to range input elements
-        for (let i = 0; i < rangeInputvalue.length; i++) {
-            rangeInputvalue[i].addEventListener("input", e => {
-                let minVal =
-                    parseInt(rangeInputvalue[0].value);
-                let maxVal =
-                    parseInt(rangeInputvalue[1].value);
-
-                let diff = maxVal - minVal
-
-                // Check if the price gap is exceeded
-                if (diff < priceGap) {
-
-                    // Check if the input is the min range input
-                    if (e.target.className === "min-range") {
-                        rangeInputvalue[0].value = maxVal - priceGap;
-                    }
-                    else {
-                        rangeInputvalue[1].value = minVal + priceGap;
-                    }
-                }
-                else {
-
-                    // Update price inputs and range progress
-                    priceInputvalue[0].value = minVal;
-                    priceInputvalue[1].value = maxVal;
-                    rangevalue.style.left =
-                        `${(minVal / rangeInputvalue[0].max) * 100}%`;
-                    rangevalue.style.right =
-                        `${100 - (maxVal / rangeInputvalue[1].max) * 100}%`;
-                }
-            });
-        }
     }
 
-    document.querySelector('.min-range').addEventListener('input',function (){
-        let minProductPrice = document.querySelector('.min-input').value
-        let maxProductPrice = document.querySelector('.max-input').value
+    function init(slider) {
+        /* set function vars */
+        var min = slider.querySelector('.min');
+        var max = slider.querySelector('.max');
+        var rangemin = parseInt(min.getAttribute('min'));
+        var rangemax = parseInt(max.getAttribute('max'));
+        var avgvalue = (rangemin + rangemax)/2;
+        var legendnum = slider.getAttribute('data-legendnum');
+
+        /* set data-values */
+        min.setAttribute('data-value',rangemin);
+        max.setAttribute('data-value',rangemax);
+
+        /* set data vars */
+        slider.setAttribute('data-rangemin',rangemin);
+        slider.setAttribute('data-rangemax',rangemax);
+        slider.setAttribute('data-thumbsize',thumbsize);
+        slider.setAttribute('data-rangewidth',slider.offsetWidth);
+
+        /* write labels */
+        var lower = document.createElement('span');
+        var upper = document.createElement('span');
+        lower.classList.add('lower','value');
+        upper.classList.add('upper','value');
+        lower.appendChild(document.createTextNode(rangemin));
+        upper.appendChild(document.createTextNode(rangemax));
+        slider.insertBefore(lower,min.previousElementSibling);
+        slider.insertBefore(upper,min.previousElementSibling);
+
+        /* write legend */
+        var legend = document.createElement('div');
+        legend.classList.add('legend');
+        var legendvalues = [];
+        for (var i = 0; i < legendnum; i++) {
+            legendvalues[i] = document.createElement('div');
+            var val = Math.round(rangemin+(i/(legendnum-1))*(rangemax - rangemin));
+            legendvalues[i].appendChild(document.createTextNode(val));
+            legend.appendChild(legendvalues[i]);
+
+        }
+        slider.appendChild(legend);
+
+        /* draw */
+        draw(slider,avgvalue);
+
+        /* events */
+        min.addEventListener("input", function() {update(min);});
+        max.addEventListener("input", function() {update(max);});
+    }
+
+    function update(el){
+        /* set function vars */
+        var slider = el.parentElement;
+        var min = slider.querySelector('#min');
+        var max = slider.querySelector('#max');
+        var minvalue = Math.floor(min.value);
+        var maxvalue = Math.floor(max.value);
+
+        /* set inactive values before draw */
+        min.setAttribute('data-value',minvalue);
+        max.setAttribute('data-value',maxvalue);
+
+        var avgvalue = (minvalue + maxvalue)/2;
+
+        /* draw */
+        draw(slider,avgvalue);
+    }
+
+    var sliders = document.querySelectorAll('.min-max-slider');
+    sliders.forEach( function(slider) {
+        init(slider);
+    });
+</script>
+<script>
+    document.querySelector('.min').addEventListener('input',function (){
+        let minProductPrice = document.querySelector('.min').getAttribute('data-value')
+        let maxProductPrice = document.querySelector('.max').getAttribute('data-value')
 
         setTimeout(function (){
             location.href=`./?minPrice=${minProductPrice}&maxPrice=${maxProductPrice}`;
         },1000)
 
     })
-    document.querySelector('.max-range').addEventListener('input',function (){
-        let minProductPrice = document.querySelector('.min-input').value
-        let maxProductPrice = document.querySelector('.max-input').value
+    document.querySelector('.max').addEventListener('input',function (){
+        let minProductPrice = document.querySelector('.min').getAttribute('data-value')
+        let maxProductPrice = document.querySelector('.max').getAttribute('data-value')
 
         setTimeout(function (){
             location.href=`./?minPrice=${minProductPrice}&maxPrice=${maxProductPrice}`;
         },1000)
 
-
-
     })
-
-
-
 </script>
