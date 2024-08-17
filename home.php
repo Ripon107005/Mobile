@@ -118,10 +118,11 @@ $brands = isset($_GET['b']) ? json_decode(urldecode($_GET['b'])) : array();
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-4 row-cols-md-3 row-cols-xl-4 ">
                     <?php
+                    
                         $where = "";
                         if(count($brands)>0)
                         $where = " and p.brand_id in (".implode(",",$brands).") " ;
-                        if ($_GET['minPrice'] || $_GET['minPrice']){
+                        if (isset($_GET['minPrice']) || isset($_GET['minPrice'])){
                             $where='AND inventory.price BETWEEN '.$_GET['minPrice'].' AND '.$_GET['minPrice'].'';
                         }
                         $products = $conn->query("SELECT p.*,b.name as bname FROM `products` p inner join brands b on p.brand_id = b.id
